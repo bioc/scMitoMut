@@ -25,7 +25,6 @@ Imports:
     methods,
     ggplot2,
     pheatmap,
-    zlibbioc,
     RColorBrewer,
     rhdf5,
     readr,

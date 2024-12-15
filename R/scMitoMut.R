@@ -16,6 +16,5 @@
 #' @import methods
 #' @import Rcpp
 #' @import ggplot2
-#' @import zlibbioc
 #' @useDynLib scMitoMut
 NULL
