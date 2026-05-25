@@ -4,7 +4,7 @@
 \alias{rm_mtmutObj}
 \title{Remove mtmutObj object}
 \usage{
-rm_mtmutObj(x, envir = .GlobalEnv)
+rm_mtmutObj(x, envir = parent.frame())
 }
 \arguments{
 \item{x}{a mtmutObj object.}

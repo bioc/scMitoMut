@@ -64,8 +64,6 @@ Following are the key functions used in the scMitoMut package:
 
 **IMPORTANT**: In this vignette, I used the term "mutation" to refer to the lineage-related somatic mutation. For each mutation, I used the dominant allele as the reference allele. If the reference allele frequency is significantly (FDR < 0.05) lower, I will call the **locus** a mutation.
 
-<!-- TODO: Describing the modeling details.-->
-
 ## Background
 
 Single-cell genomics technology serves as a powerful tool for gaining insights into cellular heterogeneity and diversity within complex tissues.
@@ -372,3 +370,7 @@ ggplot(m_dt_sub) +
 sessionInfo()
 ```
 
+```{r, include=FALSE}
+rm_mtmutObj(x)
+unlink(f_h5_tmp)
+```

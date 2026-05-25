@@ -156,10 +156,17 @@ parse_table <- function(file, h5_file = "mut.h5", ...) {
         file.remove(h5_file)
     }
 
-    H5Fcreate(h5_file)
-    h5f <- H5Fopen(h5_file)
+    h5f <- H5Fcreate(h5_file)
+    h5g <- NULL
+    on.exit({
+        if (!is.null(h5g)) {
+            try(H5Gclose(h5g), silent = TRUE)
+        }
+        if (!is.null(h5f)) {
+            try(H5Fclose(h5f), silent = TRUE)
+        }
+    }, add = TRUE)
 
-    
     ## mut_table
     h5g <- H5Gcreate(h5loc = h5f, name = "mut_table")
     plyr::d_ply(merge_d, "loc", function(x) {
@@ -183,14 +190,6 @@ parse_table <- function(file, h5_file = "mut.h5", ...) {
     ## Remove the big data
     rm("merge_d")
     gc()
-
-    ## Close the H5 file when exit R session
-    .Last <- function() {
-        cat("Performing cleanup...\n")
-        # H5Fclose(h5f)
-        # H5Gclose(h5g)
-        h5closeAll()
-    }
 
     h5_file
 }
@@ -216,14 +215,14 @@ parse_table <- function(file, h5_file = "mut.h5", ...) {
 #' x
 #' rm_mtmutObj(x)
 #' @export
-rm_mtmutObj <- function(x, envir = .GlobalEnv) {
+rm_mtmutObj <- function(x, envir = parent.frame()) {
     var_name <- deparse(substitute(x))
     if (!is(x, "mtmutObj")) {
         stop("x should be a mtmutObj object")
     }
+    try(H5Gclose(x$mut_table), silent = TRUE)
+    try(H5Fclose(x$h5f), silent = TRUE)
     if (exists(var_name, envir = envir)) {
-        H5Fclose(x$h5f)
-        H5Gclose(x$mut_table)
         rm(list = var_name, envir = envir)
         cat(sprintf("Variable '%s' removed successfully.\n", var_name))
     } else {
@@ -277,8 +276,16 @@ parse_mgatk <- function(dir, prefix, h5_file = "mut.h5") {
         file.remove(h5_file)
     }
 
-    H5Fcreate(h5_file)
-    h5f <- H5Fopen(h5_file)
+    h5f <- H5Fcreate(h5_file)
+    h5g <- NULL
+    on.exit({
+        if (!is.null(h5g)) {
+            try(H5Gclose(h5g), silent = TRUE)
+        }
+        if (!is.null(h5f)) {
+            try(H5Fclose(h5f), silent = TRUE)
+        }
+    }, add = TRUE)
 
     ## mut_table
     h5g <- H5Gcreate(h5loc = h5f, name = "mut_table")
@@ -299,11 +306,6 @@ parse_mgatk <- function(dir, prefix, h5_file = "mut.h5") {
         paste0("chrM.", .)
     h5write(loc_list, h5f, "loc_list")
     h5write(loc_list, h5f, "loc_selected")
-
-    ## TODO: Do we need to close the H5 file?
-    #     H5Fclose(h5f)
-    #     H5Gclose(h5g)
-    #     h5closeAll()
 
     ## Remove the big data
     rm("merge_d")
