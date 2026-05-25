@@ -131,6 +131,7 @@ run_model_fit <- function(mtmutObj, mc.cores = getOption("mc.cores", 1L), bb_ove
         h5delete(mtmutObj$h5f, "pval")
     }
     h5g <- H5Gcreate(h5loc = mtmutObj$h5f, name = "pval")
+    on.exit(try(H5Gclose(h5g), silent = TRUE), add = TRUE)
 
     ## run the ensemble calling
     # pb <- progress::progress_bar$new(total = length(loc_list))
